@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOPIhARI - Sistema de Gerenciamento de Filas</title>
+    <style>
+        :root {
+            --primary-color: #FF6B00;
+            --secondary-color: #ff6600;
+            --light-gray: #f4f4f4;
+            --dark-gray: #333;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+            line-height: 1.6;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), #004c99);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header h2 {
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin-bottom: 10px;
+        }
+
+        /* Navigation */
+        .nav {
+            background-color: var(--dark-gray);
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+        }
+
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            margin: 0 5px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .nav a:hover, .nav a.active {
+            background-color: var(--secondary-color);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        /* Areas Navigation */
+        .areas-nav {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .area-btn {
+            padding: 10px 20px;
+            margin: 5px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .area-btn:hover, .area-btn.active {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        /* Rides Grid */
+        .rides-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .ride-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .ride-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .ride-image {
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .ride-info {
+            padding: 15px;
+        }
+
+        .ride-name {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .ride-time {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--dark-gray);
+        }
+
+        .ride-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .status-open {
+            background-color: rgba(40, 167, 69, 0.2);
+            color: var(--success-color);
+        }
+
+        .status-busy {
+            background-color: rgba(255, 193, 7, 0.2);
+            color: var(--warning-color);
+        }
+
+        .status-very-busy {
+            background-color: rgba(220, 53, 69, 0.2);
+            color: var(--danger-color);
+        }
+
+        .status-maintenance {
+            background-color: rgba(108, 117, 125, 0.2);
+            color: #6c757d;
+        }
+
+        /* Admin Panel */
+        .admin-controls {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .admin-controls h3 {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #0055aa;
+        }
+        
+        /* Stats */
+        .stats-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            background-color: var(--light-gray);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-title {
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        /* Last update info */
+        .last-update {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--dark-gray);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+        }
+
+        /* Mobile adjustments */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .header h2 {
+                font-size: 1.2rem;
+            }
+            
+            .rides-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nav a {
+                margin: 5px 0;
+                width: 90%;
+                text-align: center;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            border: 5px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 5px solid var(--primary-color);
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>PARQUE HOPIhARI</h1>
+        <h2>Sistema de Gerenciamento de Filas</h2>
+    </div>
+
+    <div class="nav">
+        <a href="#" class="active">Visão do Visitante</a>
+        <a href="#" id="admin-link">Administração</a>
+        <a href="#" id="stats-link">Estatísticas</a>
+    </div>
+
+    <div class="container">
+        <!-- Admin Panel - Hidden by default -->
+        <div class="admin-controls" id="admin-panel" style="display: none;">
+            <h3>Painel de Administração</h3>
+            <div class="form-group">
+                <label for="atracao-select">Selecione a Atração:</label>
+                <select id="atracao-select" class="form-control">
+                    <option value="1">Montanha Mágica</option>
+                    <option value="2">Carrossel Encantado</option>
+                    <option value="3">Roda Gigante Celestial</option>
+                    <option value="4">Mansão Assombrada</option>
+                    <option value="5">Splash Aquático</option>
+                    <option value="6">Carrinhos de Choque</option>
+                    <option value="7">Trem Fantástico</option>
+                    <option value="8">Barco Viking</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="tempo-input">Tempo de Espera (minutos):</label>
+                <input type="number" id="tempo-input" class="form-control" min="0" value="0">
+            </div>
+            <div class="form-group">
+                <label for="status-select">Status:</label>
+                <select id="status-select" class="form-control">
+                    <option value="1">Normal</option>
+                    <option value="2">Movimentado</option>
+                    <option value="3">Muito Movimentado</option>
+                    <option value="4">Em Manutenção</option>
+                    <option value="5">Fechado</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" id="atualizar-btn">Atualizar Atração</button>
+        </div>
+
+        <!-- Stats Panel - Hidden by default -->
+        <div class="stats-container" id="stats-panel" style="display: none;">
+            <h3>Estatísticas do Parque</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-title">Tempo Médio de Espera</div>
+                    <div class="stat-value">22 min</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Atração Mais Movimentada</div>
+                    <div class="stat-value">Splash Aquático</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Atrações Disponíveis</div>
+                    <div class="stat-value">7/8</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Total de Visitantes</div>
+                    <div class="stat-value">3,450</div>
+                </div>
+            </div>
+            
+            <h3 style="margin-top: 30px;">Histórico de Tempos de Espera</h3>
+            <canvas id="tempos-chart" width="400" height="200"></canvas>
+        </div>
+
+        <!-- Area Navigation -->
+        <div class="areas-nav">
+            <button class="area-btn active">ÁREA 1</button>
+            <button class="area-btn">ÁREA 2</button>
+            <button class="area-btn">ÁREA 3</button>
+            <button class="area-btn">ÁREA 4</button>
+        </div>
+
+        <h2>Tempos de Espera em Tempo Real</h2>
+        
+        <div class="loading-spinner" id="loading-spinner"></div>
+
+        <div class="rides-grid">
+            <div class="ride-card">
+                <div class="ride-image" style="background-image: url('/api/placeholder/400/320')"></div>
+                <div class="ride-info">
+                    <h3 class="ride-name">Montanha Mágica</h3>
+                    <div class="ride-time">35 min</div>
+                    <span class="ride-status status-busy">Muito Movimentado</span>
+                </div>
+            </div>
+
+            <div class="ride-card">
+                <div class="ride-image" style="background-image: url('/api/placeholder/400/320')"></div>
+                <div class="ride-info">
+                    <h3 class="ride-name">Carrossel Encantado</h3>
+                    <div class="ride-time">15 min</div>
+                    <span class="ride-status status-open">Normal</span>
+                </div>
+            </div>
+
+            <div class="ride-card">
+                <div class="ride-image" style="background-image: url('/api/placeholder/400/320')"></div>
+                <div class="ride-info">
+                    <h3 class="ride-name">Roda Gigante Celestial</h3>
+                    <div class="ride-time">20 min</div>
+                    <span class="ride-status status-open">Normal</span>
+                </div>
+            </div>
+
+            <div class="ride-card">
+                <div class="ride-image" style="background-image: url('/api/placeholder/400/320')"></div>
+                <div class="ride-info">
+                    <h3 class="ride-name">Mansão Assombrada</h3>
+                    <div class="ride-time">25 min</div>
+                    <span class="ride-status status-busy">Movimentado</span>
+                </div>
+            </div>
+
+            <div class="ride-card">
+                <div class="ride-image" style="background-image: url('/api/placeholder/400/320')"></div>
+                <div class="ride-info">
+                    <h3 class="ride-name">Splash Aquático</h3>
+                    <div class="ride-time">40 min</div>
+                    <span class="ride-status status-busy">Muito Movimentado</span>
+                </div>
+            </div>
+
+            <div class="ride-card">
+                <div class="ride-image" style="background-image: url('/api/placeholder/400/320')"></div>
+                <div class="ride-info">
+                    <h3 class="ride-name">Carrinhos de Choque</h3>
+                    <div class="ride-time">10 min</div>
+                    <span class="ride-status status-open">Normal</span>
+                </div>
+            </div>
+
+            <div class="ride-card">
+                <div class="ride-image" style="background-image: url('/api/placeholder/400/320')"></div>
+                <div class="ride-info">
+                    <h3 class="ride-name">Trem Fantástico</h3>
+                    <div class="ride-time">0 min</div>
+                    <span class="ride-status status-maintenance">Em Manutenção</span>
+                </div>
+            </div>
+
+            <div class="ride-card">
+                <div class="ride-image" style="background-image: url('/api/placeholder/400/320')"></div>
+                <div class="ride-info">
+                    <h3 class="ride-name">Barco Viking</h3>
+                    <div class="ride-time">30 min</div>
+                    <span class="ride-status status-busy">Movimentado</span>
+                </div>
+            </div>
+        </div>
+
+        <p class="last-update" id="last-update">Última atualização: 25/04/2025 15:42</p>
+    </div>
+
+    <div class="footer">
+        &copy; 2025 Parque HOPIhARI - Sistema de Gerenciamento de Filas
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script>
+        // Elementos DOM principais
+        const adminLink = document.getElementById('admin-link');
+        const statsLink = document.getElementById('stats-link');
+        const adminPanel = document.getElementById('admin-panel');
+        const statsPanel = document.getElementById('stats-panel');
+        const atualizarBtn = document.getElementById('atualizar-btn');
+        const loadingSpinner = document.getElementById('loading-spinner');
+        const lastUpdateElement = document.getElementById('last-update');
+        
+        // Event listeners
+        adminLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            adminPanel.style.display = 'block';
+            statsPanel.style.display = 'none';
+            
+            // Destacar link ativo
+            adminLink.classList.add('active');
+            statsLink.classList.remove('active');
+            document.querySelector('.nav a:first-child').classList.remove('active');
+        });
+        
+        statsLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            statsPanel.style.display = 'block';
+            adminPanel.style.display = 'none';
+            
+            // Destacar link ativo
+            statsLink.classList.add('active');
+            adminLink.classList.remove('active');
+            document.querySelector('.nav a:first-child').classList.remove('active');
+            
+            // Inicializar o Chart.js
+            initializeChart();
+        });
+        
+        document.querySelector('.nav a:first-child').addEventListener('click', function(e) {
+            e.preventDefault();
+            adminPanel.style.display = 'none';
+            statsPanel.style.display = 'none';
+            
+            // Destacar link ativo
+            this.classList.add('active');
+            adminLink.classList.remove('active');
+            statsLink.classList.remove('active');
+        });
+        
+        // Navegação entre áreas do parque
+        const areaBtns = document.querySelectorAll('.area-btn');
+        areaBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remover classe active de todos os botões
+                areaBtns.forEach(b => b.classList.remove('active'));
+                
+                // Adicionar classe active ao botão clicado
+                this.classList.add('active');
+                
+                // Aqui seria feita uma requisição para buscar as atrações da área selecionada
+                // Simulando o carregamento
+                loadingSpinner.style.display = 'block';
+                setTimeout(() => {
+                    loadingSpinner.style.display = 'none';
+                }, 1000);
+            });
+        });
+        
+        // Simulação de atualização
+        atualizarBtn.addEventListener('click', function() {
+            const atracaoId = document.getElementById('atracao-select').value;
+            const tempoEspera = document.getElementById('tempo-input').value;
+            const statusId = document.getElementById('status-select').value;
+            
+            // Em um ambiente real, aqui seria feita uma requisição AJAX para o servidor
+            // que chamaria o procedimento armazenado atualizar_tempo_espera
+            
+            // Simulando o envio
+            loadingSpinner.style.display = 'block';
+            
+            setTimeout(() => {
+                loadingSpinner.style.display = 'none';
+                
+                // Atualizar a interface
+                const agora = new Date();
+                const dataFormatada = agora.toLocaleDateString();
+                const horaFormatada = agora.toLocaleTimeString();
+                lastUpdateElement.textContent = `Última atualização: ${dataFormatada} ${horaFormatada}`;
+                
+                // Mostrar mensagem de sucesso (em um caso real, verificaria a resposta do servidor)
+                alert('Atração atualizada com sucesso!');
+                
+                // Atualizar a informação na interface (simulação)
+                atualizarCardAtracao(atracaoId, tempoEspera, statusId);
+            }, 1500);
+        });
+        
+        // Função para atualizar o card de uma atração específica
+        function atualizarCardAtracao(id, tempo, statusId) {
+            // Encontrar o card correspondente à atração
+            const cards = document.querySelectorAll('.ride-card');
+            const card = cards[id - 1]; // Considerando que o ID começa em 1
+            
+            if (card) {
+                // Atualizar o tempo
+                card.querySelector('.ride-time').textContent = tempo + ' min';
+                
+                // Atualizar o status
+                const statusElement = card.querySelector('.ride-status');
+                const statusTextos = ['Normal', 'Movimentado', 'Muito Movimentado', 'Em Manutenção', 'Fechado'];
+                const statusClasses = ['status-open', 'status-busy', 'status-very-busy', 'status-maintenance', 'status-maintenance'];
+                
+                // Remover todas as classes de status
+                statusElement.className = 'ride-status';
+                
+                // Adicionar a classe correta
+                statusElement.classList.add(statusClasses[statusId - 1]);
+                
+                // Atualizar o texto
+                statusElement.textContent = statusTextos[statusId - 1];
+            }
+        }
+        
+        // Função para inicializar o gráfico de estatísticas
+        function initializeChart() {
+            // Dados de exemplo para o gráfico
+            const ctx = document.getElementById('tempos-chart').getContext('2d');
+            
+            // Verificar se já existe um gráfico e destruí-lo
+            if (window.temposChart) {
+                window.temposChart.destroy();
+            }
+            
+            // Criar novo gráfico
+            window.temposChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00'],
+                    datasets: [{
+                        label: 'Tempo Médio de Espera (min)',
+                        data: [12, 19, 25, 35, 30, 22, 20],
+                        backgroundColor: 'rgba(0, 102, 204, 0.2)',
+                        borderColor: 'rgba(0, 102, 204, 1)',
+                        borderWidth: 2,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Minutos'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Horário'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Função para atualizar os tempos de espera (simulação de conexão com o banco de dados)
+        function atualizarTemposEspera() {
+            // Em um ambiente real, aqui seria feita uma requisição AJAX para o servidor
+            // que retornaria os dados da view view_estado_atual
+            
+            const agora = new Date();
+            lastUpdateElement.textContent = 
+                `Última atualização: ${agora.toLocaleDateString()} ${agora.toLocaleTimeString()}`;
+        }
+        
+        // Atualizar a cada 30 segundos
+        setInterval(atualizarTemposEspera, 30000);
+
+        // Simulação de funcionalidade para a demonstração
+        function simulacaoAtividadeParque() {
+            // A cada 10 segundos, simular uma mudança aleatória em alguma atração
+            setInterval(() => {
+                const atracaoId = Math.floor(Math.random() * 8) + 1;
+                const novoTempo = Math.floor(Math.random() * 45);
+                const novoStatus = Math.floor(Math.random() * 3) + 1; // Status de 1 a 3
+                
+                // Se o Trem Fantástico, manter em manutenção
+                if (atracaoId !== 7) {
+                    atualizarCardAtracao(atracaoId, novoTempo, novoStatus);
+                }
+                
+                // Atualizar timestamp
+                const agora = new Date();
+                lastUpdateElement.textContent = 
+                    `Última atualização: ${agora.toLocaleDateString()} ${agora.toLocaleTimeString()}`;
+            }, 10000);
+        }
+        
+        // Iniciar simulação para demonstração
+        simulacaoAtividadeParque();
+    </script>
+</body>
+</html>

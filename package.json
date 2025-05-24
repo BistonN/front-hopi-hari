@@ -1,0 +1,76 @@
+Last login: Sun May  4 08:47:55 on console
+biston@Joaos-MacBook-Air ~ % cd Projetos 
+biston@Joaos-MacBook-Air Projetos % git clone git@github.com:BistonN/front-hopi-hari.git
+Cloning into 'front-hopi-hari'...
+remote: Enumerating objects: 3, done.
+remote: Counting objects: 100% (3/3), done.
+remote: Total 3 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+Receiving objects: 100% (3/3), done.
+biston@Joaos-MacBook-Air Projetos % ls
+Conversando			milho
+analise-sentimento-twitter	milho Widget
+apikey.json			minehostbr
+binance-bot			nlp
+bingo				node_modules
+codewars-solutions		package-lock.json
+crawler-enterprises-waterford	package.json
+data-engineering-zoomcamp	skills
+front-hopi-hari			superbrothers
+getToken.js			superbrothers.zip
+jv-ireland-webpage		token_output.txt
+biston@Joaos-MacBook-Air Projetos % cd front-hopi-hari/ 
+biston@Joaos-MacBook-Air front-hopi-hari % npm i
+
+added 108 packages, and audited 109 packages in 4s
+
+19 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+npm notice
+npm notice New major version of npm available! 10.7.0 -> 11.4.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.4.1
+npm notice To update run: npm install -g npm@11.4.1
+npm notice
+biston@Joaos-MacBook-Air front-hopi-hari % npm strta
+Unknown command: "strta"
+
+To see a list of supported npm commands, run:
+  npm help
+biston@Joaos-MacBook-Air front-hopi-hari % npm start
+npm error Missing script: "start"
+npm error
+npm error Did you mean one of these?
+npm error   npm star # Mark your favorite packages
+npm error   npm stars # View packages marked as favorites
+npm error
+npm error To see a list of scripts, run:
+npm error   npm run
+
+npm error A complete log of this run can be found in: /Users/biston/.npm/_logs/2025-05-24T11_36_47_158Z-debug-0.log
+biston@Joaos-MacBook-Air front-hopi-hari % nano package.json
+
+  UW PICO 5.09                   File: package.json                   Modified  
+
+{
+  "name": "conversando",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js"  
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC", 
+  "description": "",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "body-parser": "^2.2.0",
+    "express": "^5.1.0",
+    "mysql2": "^3.14.1",
+    "nodemon": "^3.1.10"
+  }
+
+^G Get Help  ^O WriteOut  ^R Read File ^Y Prev Pg   ^K Cut Text  ^C Cur Pos   
+^X Exit      ^J Justify   ^W Where is  ^V Next Pg   ^U UnCut Text^T To Spell  
